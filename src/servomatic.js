@@ -31,7 +31,7 @@ var dirs = {
     , public   : join(cwd, 'public')
     , views    : join(cwd, 'views')
     , favicon  : join(cwd, 'favicon.ico')
-    , worstCase: join(__dirname, 'dist')
+    , worstCase: join(__dirname, 'static')
   }
   , logger = new Logger( servomatic )
 ;
@@ -57,7 +57,8 @@ servomatic.use('/slackomatic/*', api);
 servomatic.use(killer);
 
 servomatic.use( express.static( dirs.static, {
-  index: ['index.html'] //always load index.html files on /
+  extensions: ['html'] //automatically add html extension to urls
+, index: ['index.html'] //always load index.html files on /
 }));
 
 //renders :page from views/pages if static html does not exist
@@ -66,9 +67,9 @@ servomatic.use('/:page', view);
 servomatic.use( express.static(dirs.worstCase) );
 
 // catch 404 and forwarding to error handler
-servomatic.use( (err, req, res, next) => {
-  //~ var err = new Error('Not Found');
-  //~ err.status = 404;
+servomatic.use( (req, res, next) => {
+  var err = new Error('Not Found');
+  err.status = 404;
   next(err);
 });
 
