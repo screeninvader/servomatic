@@ -10,6 +10,9 @@
     "release": "bin/build && bin/release",
     "setup": "bin/install"
   },
+  "bin": {
+    "servomatic": "dist/servomatic.js"
+  }
   "dependencies": {
     "express": "^4.12.3",
     "jade": "^1.9.2",
