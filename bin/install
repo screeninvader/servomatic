@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo 'first install all dependencies'
+npm install
+
+echo 'run the build process to finish precompilation of dependencies'
+./bin/build

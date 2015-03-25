@@ -1,0 +1,9 @@
+#!/bin/bash
+#this file runs the node slack in production mode
+
+#this file gets copied to dist/bin/run by bin/build
+
+#move to app root directory
+
+echo 'execute node app in dist/ directory'
+sudo node dist/servomatic.js $@

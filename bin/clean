@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo 'asking for root to make sure you want it and know what you are doing'
+echo 'rm command will not use root'
+su root -c 'echo "delete node_modules, slack.js, run and log/"'
+
+rm -rf \
+  ./node_modules \
+  ./slack.js \
+  ./slack.js.map \
+  ./run \
+  ./log \
+  ./lib \
+  ./dist \
+;

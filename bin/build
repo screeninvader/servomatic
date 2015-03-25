@@ -1,0 +1,23 @@
+#!/bin/bash
+
+echo 'delete dist directory'
+rm -rf dist/
+mkdir -p dist
+
+echo 'create log directory'
+mkdir -p log
+
+echo 'compile ecmascript7 to es5'
+node_modules/.bin/babel \
+  src/ \
+  --out-dir dist/ \
+  --experimental \
+  --source-maps \
+;
+
+echo 'copy static html, css and js to dist/'
+cd src && cp -rf \
+  static/* \
+  ../dist/ \
+&& cd ../ \
+;
