@@ -1,30 +1,45 @@
 //logging middleware
 import morgan from 'morgan';
 import {join} from 'path';
-import {createWriteStream as wStream} from 'fs';
-import mkdirp from 'mkdirp';
+import {createWriteStream as wStream, existsSync} from 'fs';
 import merge from 'magic-merge';
 import {each} from 'magic-loops';
+import mkdirp from 'mkdirp';
+
+var self;
 
 class Logger {
   constructor(app, opts = {}) {
     var cwd         = process.cwd()
-      , dir         = join(cwd, 'log')
-      , defaultOpts = {
-          access: {
-            stream: wStream( join(dir, 'access.log'), {flags: 'a'} )
-          , skip: function (req, res) { return res.statusCode >= 400 }
-        }
-        , err   : {
-            stream: wStream( join(dir, 'error.log'), {flags: 'a'} )
-          , skip: function (req, res) { return res.statusCode < 400 }
-        }
-      }
-      , logs        = merge(opts, defaultOpts);
+      , defaultDir  = join('/var', 'log', 'servomatic')
     ;
 
-    each(logs, (log) => {
-      app.use( morgan('combined', log) )
+    self     = this;
+    self.dir = opts.dir || join(cwd, 'log')
+
+    if ( ! existsSync(self.dir) ) {
+      console.log(`log dir at ${self.dir} does not exist, creating ${defaultDir}`);
+      self.dir = defaultDir;
+      mkdirp(self.dir, {mode: 644} );
+    }
+
+    self.logs = merge(opts, {
+        access: {
+          stream: wStream( join(self.dir, 'access.log'), {flags: 'a'} )
+        , skip: function (req, res) { return res.statusCode >= 400 }
+      }
+      , err   : {
+          stream: wStream( join(self.dir, 'error.log'), {flags: 'a'} )
+        , skip: function (req, res) { return res.statusCode < 400 }
+      }
+    });
+
+    self.app = app;
+  }
+
+  middleware() {
+    each(self.logs, (log) => {
+      self.app.use( morgan('combined', log) )
     });
   }
 }

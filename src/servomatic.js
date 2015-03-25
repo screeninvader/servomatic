@@ -1,3 +1,5 @@
+#!/usr/bin/node
+
 import express from 'express';
 import {get} from 'http';
 import {join} from 'path';
@@ -25,11 +27,14 @@ if ( argv.dir && typeof argv.dir === 'string' ) {
 }
 
 var dirs = {
-    static: join(cwd)
-  , public: join(cwd, 'public')
-  , views : join(cwd, 'views')
-  , favicon: join(cwd, 'favicon.ico')
-};
+      static   : join(cwd)
+    , public   : join(cwd, 'public')
+    , views    : join(cwd, 'views')
+    , favicon  : join(cwd, 'favicon.ico')
+    , worstCase: join(__dirname, 'dist')
+  }
+  , logger = new Logger( servomatic )
+;
 
 console.log(`executing in cwd: ${cwd}`);
 
@@ -42,29 +47,28 @@ servomatic.set('view engine', 'jade');
 new Favicon(servomatic, dirs.favicon);
 
 //if requested path exists in /public it gets served from there
-servomatic.use(express.static(dirs.public));
+servomatic.use( express.static(dirs.public) );
 
-new Logger(servomatic);
+logger.middleware(servomatic);
 
 //servomaticomatic api redirect
 servomatic.use('/slackomatic/*', api);
 
 servomatic.use(killer);
 
-servomatic.use(
-  express.static( dirs.static, {
-      extensions: ["html"] //add html extension
-    , index: ['index.html'] //always load index.html files on /
-  } )
-);
+servomatic.use( express.static( dirs.static, {
+  index: ['index.html'] //always load index.html files on /
+}));
 
 //renders :page from views/pages if static html does not exist
 servomatic.use('/:page', view);
 
+servomatic.use( express.static(dirs.worstCase) );
+
 // catch 404 and forwarding to error handler
-servomatic.use( (req, res, next) => {
-  var err = new Error('Not Found');
-  err.status = 404;
+servomatic.use( (err, req, res, next) => {
+  //~ var err = new Error('Not Found');
+  //~ err.status = 404;
   next(err);
 });
 
@@ -73,8 +77,9 @@ servomatic.use( (req, res, next) => {
 if ( ! errorHandler.hasOwnProperty(env) ) {
   env = 'production';
 }
-servomatic.use(errorHandler[env]);
 
-servomatic.listen(servomatic.get('port'), () => {
+servomatic.use( errorHandler[env] );
+
+servomatic.listen( servomatic.get('port'), () => {
   console.log(`servomatic listens on port : ${servomatic.get('port')}`);
-});
+} );

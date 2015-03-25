@@ -1,3 +1,4 @@
+#!/usr/bin/node
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -41,8 +42,10 @@ var dirs = {
   "static": join(cwd),
   "public": join(cwd, "public"),
   views: join(cwd, "views"),
-  favicon: join(cwd, "favicon.ico")
-};
+  favicon: join(cwd, "favicon.ico"),
+  worstCase: join(__dirname, "dist")
+},
+    logger = new Logger(servomatic);
 
 console.log("executing in cwd: " + cwd);
 
@@ -57,7 +60,7 @@ new Favicon(servomatic, dirs.favicon);
 //if requested path exists in /public it gets served from there
 servomatic.use(express["static"](dirs["public"]));
 
-new Logger(servomatic);
+logger.middleware(servomatic);
 
 //servomaticomatic api redirect
 servomatic.use("/slackomatic/*", api);
@@ -65,17 +68,18 @@ servomatic.use("/slackomatic/*", api);
 servomatic.use(killer);
 
 servomatic.use(express["static"](dirs["static"], {
-  extensions: ["html"] //add html extension
-  , index: ["index.html"] //always load index.html files on /
+  index: ["index.html"] //always load index.html files on /
 }));
 
 //renders :page from views/pages if static html does not exist
 servomatic.use("/:page", view);
 
+servomatic.use(express["static"](dirs.worstCase));
+
 // catch 404 and forwarding to error handler
-servomatic.use(function (req, res, next) {
-  var err = new Error("Not Found");
-  err.status = 404;
+servomatic.use(function (err, req, res, next) {
+  //~ var err = new Error('Not Found');
+  //~ err.status = 404;
   next(err);
 });
 
@@ -84,6 +88,7 @@ servomatic.use(function (req, res, next) {
 if (!errorHandler.hasOwnProperty(env)) {
   env = "production";
 }
+
 servomatic.use(errorHandler[env]);
 
 servomatic.listen(servomatic.get("port"), function () {

@@ -5,16 +5,17 @@
   "author": "Metalab <metalab@lists.metalab.at>",
   "license": "AGPL",
   "scripts": {
-    "start": "bin/build && bin/run --dir dist",
+    "start": "bin/build && bin/run --dir dist/static",
     "prepub": "bin/build",
     "release": "bin/build && bin/release",
     "setup": "bin/install"
   },
   "bin": {
     "servomatic": "dist/servomatic.js"
-  }
+  },
   "dependencies": {
     "express": "^4.12.3",
+    "html-inline": "^1.1.1",
     "jade": "^1.9.2",
     "magic-favicon": "git://github.com/express-magic/magic-favicon",
     "magic-loops": "git://github.com/express-magic/magic-loops",
