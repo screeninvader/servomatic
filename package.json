@@ -11,7 +11,7 @@
     "setup": "bin/install"
   },
   "bin": {
-    "servomatic": "dist/servomatic.js"
+    "servomatic": "servomatic.js"
   },
   "dependencies": {
     "express": "^4.12.3",
