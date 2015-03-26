@@ -39,7 +39,7 @@ class Logger {
 
   middleware() {
     each(self.logs, (log) => {
-      self.app.use( morgan('combined', log) )
+      self.app.use( morgan('default', log) )
     });
   }
 }
