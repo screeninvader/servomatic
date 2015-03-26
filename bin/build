@@ -2,27 +2,26 @@
 
 echo 'delete dist directory'
 rm -rf dist/
-mkdir -p dist dist/static
+mkdir -p dist
 
 echo 'create log directory'
 mkdir -p log
 
-echo 'copy css to dist/'
-cp src/static/index.css \
-  dist/static/index.css -rf \
+echo 'copy html and css to dist'
+cp src/static/* \
+  dist/ \
 ;
 
 echo 'compile ecmascript7 to es5'
 node_modules/.bin/babel \
-  src/ \
-  --out-dir dist/ \
+  src/ src/lib/*  \
+  --out-file servomatic.js \
   --experimental \
-  --source-maps \
 ;
 
 echo 'html-inline all assets into inline.html'
 node_modules/.bin/html-inline \
-  -i src/static/index.html \
-  -o dist/static/index.html \
-  -b dist/static \
+  -i dist/page.html \
+  -o dist/index.html \
+  -b dist \
 ;

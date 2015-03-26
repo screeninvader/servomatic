@@ -6,4 +6,4 @@
 #move to app root directory
 
 echo 'execute node app in dist/ directory'
-sudo node dist/servomatic.js $@
+sudo node servomatic.js $@

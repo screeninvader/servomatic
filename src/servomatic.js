@@ -1,15 +1,8 @@
-#!/usr/bin/node
-
 import express from 'express';
 import {get} from 'http';
 import {join} from 'path';
 import Favicon from 'magic-favicon';
 import {existsSync} from 'fs';
-import api from './lib/api';
-import errorHandler from './lib/errorHandler';
-import killer from './lib/killer';
-import view from './lib/view';
-import Logger from './lib/logger';
 import minimist from 'minimist';
 
 var servomatic = express()
@@ -27,11 +20,11 @@ if ( argv.dir && typeof argv.dir === 'string' ) {
 }
 
 var dirs = {
-      static   : join(cwd)
+      static   : join(cwd, 'static')
     , public   : join(cwd, 'public')
     , views    : join(cwd, 'views')
     , favicon  : join(cwd, 'favicon.ico')
-    , worstCase: join(__dirname, 'static')
+    , worstCase: join(__dirname, 'dist')
   }
   , logger = new Logger( servomatic )
 ;
