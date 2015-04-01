@@ -1,79 +1,86 @@
 import express from 'express';
 import {get} from 'http';
 import {join} from 'path';
-import Favicon from 'magic-favicon';
 import {existsSync} from 'fs';
 import minimist from 'minimist';
+import Favicon from 'magic-favicon';
+import isObj from 'magic-types';
+import merge from 'magic-merge';
 
-var servomatic = express()
-  , env   = servomatic.get('env')
-  , cwd   = process.cwd()
-  , argv  = minimist( process.argv.slice(2) )
-;
+class Servomatic {
+  constructor(opts, app) {
+    var cwd = process.cwd()
+      , defaultDirs = {
+          static           : join(cwd, 'dist')
+        , public           : join(cwd, 'public')
+        , views            : join(cwd, 'views')
+        , favicon          : join(cwd, 'favicon.ico')
+        , worstCaseFallBack: join(__dirname, 'dist')
+      }
+    ;
 
-if ( argv.dir && typeof argv.dir === 'string' ) {
-  if ( argv.dir.indexOf('/') === 0 ) {
-    cwd = argv.dir;
-  } else {
-    cwd = join( cwd, argv.dir );
+    this.app = opts.app || express();
+    this.env  = opts.env || this.app.get('env');
+    this.cwd  = opts.cwd || cwd;
+    this.app.set('env', this.env);
+    this.dirs = merge(defaultDirs, opts.dirs);
+    this.logger = new Logger( this.app );
+    this.port = opts.port || process.env.PORT || 80;
+  }
+
+  start() {
+    var dirs = this.dirs;
+    console.log(`executing in cwd: ${this.cwd} with dirs ${JSON.stringify(this.dirs)}`);
+
+    this.app.set('port', this.port);
+
+    // view engine setup for the rare cases where no html file exists
+    this.app.set('views', dirs.views);
+    this.app.set('view engine', 'jade');
+
+    new Favicon(this.app, dirs.favicon);
+
+    //if requested path exists in /public it gets served from there
+    this.app.use( express.static(dirs.public) );
+
+    this.logger.middleware(this.app);
+
+    this.app.use( express.static( dirs.static, {
+      extensions: ['html'] //automatically add html extension to urls
+    , index: ['index.html'] //always load index.html files on /
+    }));
+
+    //servomatic api redirect
+    //lib/api.js, gets included by babelify
+    this.app.use('/slackomatic/*', api);
+
+    // lib/killer.js, gets included by babelify
+    this.app.use(killer);
+
+    //renders :page from views/pages if static html does not exist
+    this.app.use('/:page', view);
+
+    this.app.use( express.static(dirs.worstCaseFallBack) );
+
+    // catch 404 and forwarding to error handler
+    this.app.use( (req, res, next) => {
+      var err = new Error('Not Found');
+      err.status = 404;
+      next(err);
+    });
+
+    // error handlers
+    // development error handler prints stacktrace
+    if ( ! this.env ||  ! errorHandler.hasOwnProperty(this.env) ) {
+      env = 'production';
+    }
+
+    this.app.use( errorHandler[this.env] );
+
+    this.app.listen( this.app.get('port'), () => {
+      console.log(`this.app listens on port : ${this.app.get('port')}`);
+    } );
   }
 }
 
-var dirs = {
-      static   : join(cwd, 'static')
-    , public   : join(cwd, 'public')
-    , views    : join(cwd, 'views')
-    , favicon  : join(cwd, 'favicon.ico')
-    , worstCase: join(__dirname, 'dist')
-  }
-  , logger = new Logger( servomatic )
-;
-
-console.log(`executing in cwd: ${cwd}`);
-
-servomatic.set('port', process.env.PORT || 80);
-
-// view engine setup for the rare cases where no html file exists
-servomatic.set('views', dirs.views);
-servomatic.set('view engine', 'jade');
-
-new Favicon(servomatic, dirs.favicon);
-
-//if requested path exists in /public it gets served from there
-servomatic.use( express.static(dirs.public) );
-
-logger.middleware(servomatic);
-
-//servomaticomatic api redirect
-servomatic.use('/slackomatic/*', api);
-
-servomatic.use(killer);
-
-servomatic.use( express.static( dirs.static, {
-  extensions: ['html'] //automatically add html extension to urls
-, index: ['index.html'] //always load index.html files on /
-}));
-
-//renders :page from views/pages if static html does not exist
-servomatic.use('/:page', view);
-
-servomatic.use( express.static(dirs.worstCase) );
-
-// catch 404 and forwarding to error handler
-servomatic.use( (req, res, next) => {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-// development error handler prints stacktrace
-if ( ! errorHandler.hasOwnProperty(env) ) {
-  env = 'production';
-}
-
-servomatic.use( errorHandler[env] );
-
-servomatic.listen( servomatic.get('port'), () => {
-  console.log(`servomatic listens on port : ${servomatic.get('port')}`);
-} );
+export default Servomatic;

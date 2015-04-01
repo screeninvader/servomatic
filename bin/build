@@ -1,27 +1,32 @@
 #!/bin/bash
 
+SRC_DIR=src/
+DIST_DIR=dist/ #! WILL BE DELETED
+STATIC_DIR=${SRC_DIR}static/
+BABEL_FILES="src/lib/* src/servomatic.js"
+
 echo 'delete dist directory'
-rm -rf dist/
-mkdir -p dist
+rm -rf ${DIST_DIR}
+mkdir -p ${DIST_DIR}
 
 echo 'create log directory'
-mkdir -p log
+mkdir -p ${DIST_DIR}log
 
 echo 'copy html and css to dist'
-cp src/static/* \
-  dist/ \
+cp ${STATIC_DIR}* \
+  ${DIST_DIR} \
 ;
 
 echo 'compile ecmascript7 to es5'
 node_modules/.bin/babel \
-  src/ src/lib/*  \
+  ${BABEL_FILES} \
   --out-file servomatic.js \
   --experimental \
 ;
 
 echo 'html-inline all assets into inline.html'
 node_modules/.bin/html-inline \
-  -i dist/page.html \
-  -o dist/index.html \
-  -b dist \
+  -i ${DIST_DIR}page.html \
+  -o ${DIST_DIR}index.html \
+  -b ${DIST_DIR} \
 ;

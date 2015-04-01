@@ -1,4 +1,4 @@
 #!/bin/bash
 
 echo 'execute node app in dist/ directory'
-sudo node servomatic.js $@
+sudo bin/server.js $@
