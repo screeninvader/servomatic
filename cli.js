@@ -7,7 +7,11 @@ var minimist = _interopRequire(require("minimist"));
 
 var Servomatic = _interopRequire(require("./servomatic"));
 
-var join = require("path").join;
+var _path = require("path");
+
+var join = _path.join;
+var resolve = _path.resolve;
+var normalize = _path.normalize;
 
 var _magicTypes = require("magic-types");
 
@@ -22,18 +26,13 @@ var argv = minimist(process.argv.slice(2)),
     cwd = process.cwd(),
     env = "production",
     opts = {
-  port: 1337
+  port: 1337,
+  dir: join(cwd, "dist"),
+  logDir: join("/var", "log", "servomatic")
 };
 
 if (argv.dir && isStr(argv.dir)) {
-  var wd = argv.dir;
-  if (argv.dir.indexOf("/") !== 0) {
-    wd = join(cwd, argv.dir);
-  }
-
-  if (existsSync(wd)) {
-    opts.dir = wd;
-  }
+  opts.dir = findFilePath("dir", argv.dir);
 }
 
 if (argv.env && isStr(argv.env)) {
@@ -45,12 +44,26 @@ if (argv.port && isNum(argv.port)) {
 }
 
 if (argv.logDir && isStr(argv.logDir)) {
-  if (existsSync(argv.logDir)) {
-    opts.logDir = argv.logDir;
-  }
+  opts.logDir = findFilePath("logDir", argv.logDir);
 }
 
 opts = merge(argv, opts);
 
 var servomatic = new Servomatic(opts);
 servomatic.start();
+
+function findFilePath(key, file) {
+  var f = file;
+  if (key && !file) {
+    return opts[key];
+  }
+
+  if (resolve(file) !== normalize(file)) {
+    //~ if ( ! path.isAbsolute(themedir) ) { //needs node 0.12
+    file = join(cwd, file);
+    if (existsSync(file)) {
+      return file;
+    }
+  }
+  return f;
+}
