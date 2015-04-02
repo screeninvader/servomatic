@@ -120,17 +120,13 @@ var Logger = (function () {
 
     this.logs = merge(opts, {
       access: {
-        stream: wStream(join(this.dir, "access.log"), { flags: "a" }),
-        skip: function skip(req, res) {
-          return res.statusCode >= 400;
-        }
-      },
-      err: {
-        stream: wStream(join(this.dir, "error.log"), { flags: "a" }),
-        skip: function skip(req, res) {
-          return res.statusCode < 400;
-        }
+        stream: wStream(join(this.dir, "access.log"), { flags: "a" })
+        //~ , skip: function (req, res) { return res.statusCode >= 400 }
       }
+      //~ , err: {
+      //~ stream: wStream( join(this.dir, 'error.log'), {flags: 'a'} )
+      //~ , skip: function (req, res) { return res.statusCode < 400 }
+      //~ }
     });
 
     this.app = app;

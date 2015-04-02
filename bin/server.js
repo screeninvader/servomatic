@@ -10,7 +10,7 @@ var argv  = minimist(process.argv.slice(2))
   , cwd   = process.cwd()
   , env   = 'production'
   , opts  = {
-    port: 80
+    port: 1337
   }
 ;
 

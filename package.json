@@ -5,13 +5,13 @@
   "author": "Metalab <metalab@lists.metalab.at>",
   "license": "AGPL",
   "scripts": {
-    "start": "bin/build && bin/run --dir dist/static",
+    "start": "bin/build && bin/server.js --dir dist/static",
     "prepub": "bin/build",
     "release": "bin/build && bin/server.js $@",
     "setup": "bin/install"
   },
   "bin": {
-    "servomatic": "bin/server.js"
+    "servomatic": "servomatic.js"
   },
   "dependencies": {
     "express": "^4.12.3",
