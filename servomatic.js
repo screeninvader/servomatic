@@ -217,7 +217,7 @@ var Servomatic = (function () {
         var _this = this;
 
         var dirs = this.dirs;
-        console.log("servomatic serving from: " + this.cwd);
+        console.log("servomatic serving from cwd: " + this.cwd);
 
         this.app.set("port", this.port);
 

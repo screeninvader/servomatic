@@ -23,6 +23,13 @@ node_modules/.bin/babel \
   --out-file servomatic.js \
   --experimental \
 ;
+node_modules/.bin/babel \
+  src/cli.js \
+  --out-file cli.js \
+  --experimental \
+;
+
+chmod +x cli.js
 
 echo 'html-inline all assets into inline.html'
 node_modules/.bin/html-inline \

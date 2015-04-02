@@ -5,9 +5,8 @@
   "author": "Metalab <metalab@lists.metalab.at>",
   "license": "AGPL",
   "scripts": {
-    "start": "bin/build && bin/server.js --dir dist/static",
+    "start": "bin/build && ./cli.js --dir dist/static",
     "prepub": "bin/build",
-    "release": "bin/build && bin/server.js $@",
     "setup": "bin/install"
   },
   "bin": {
