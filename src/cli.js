@@ -12,8 +12,6 @@ var argv  = minimist(process.argv.slice(2))
   , env   = 'production'
   , opts  = {
       port: 1337
-    , dir: join(cwd, 'dist')
-    , logDir: join('/var', 'log', 'servomatic')
   }
 ;
 
@@ -29,11 +27,7 @@ if ( argv.port && isNum(argv.port) ) {
   opts.port = argv.port;
 }
 
-if ( argv.logDir && isStr(argv.logDir) ) {
-  opts.logDir = findFilePath('logDir', argv.logDir);
-}
-
-opts = merge(argv, opts);
+console.log('starting slackomatic with opts', opts);
 
 var servomatic = new Servomatic(opts);
 servomatic.start();

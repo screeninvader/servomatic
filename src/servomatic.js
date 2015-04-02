@@ -6,6 +6,7 @@ import minimist from 'minimist';
 import Favicon from 'magic-favicon';
 import isObj from 'magic-types';
 import merge from 'magic-merge';
+import morgan from 'morgan';
 
 class Servomatic {
   constructor(opts, app) {
@@ -24,7 +25,6 @@ class Servomatic {
     this.cwd  = opts.cwd || cwd;
     this.app.set('env', this.env);
     this.dirs = merge(defaultDirs, opts.dirs);
-    this.logger = new Logger( this.app );
     this.port = opts.port || process.env.PORT || 1337;
   }
 
@@ -42,8 +42,6 @@ class Servomatic {
 
     //if requested path exists in /public it gets served from there
     this.app.use( express.static(dirs.public) );
-
-    this.logger.middleware(this.app);
 
     this.app.use( express.static( dirs.static, {
       extensions: ['html'] //automatically add html extension to urls
