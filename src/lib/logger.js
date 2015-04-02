@@ -37,7 +37,6 @@ class Logger {
   middleware() {
     var self = this;
     each(this.logs, (log) => {
-      console.log('logger');
       self.app.use( morgan('combined', log) );
     });
   }

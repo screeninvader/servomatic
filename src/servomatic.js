@@ -30,7 +30,7 @@ class Servomatic {
 
   start() {
     var dirs = this.dirs;
-    console.log(`executing in cwd: ${this.cwd} with dirs ${JSON.stringify(this.dirs)}`);
+    console.log(`servomatic serving from cwd: ${this.cwd}`);
 
     this.app.set('port', this.port);
 

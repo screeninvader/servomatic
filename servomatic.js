@@ -137,7 +137,6 @@ var Logger = (function () {
       value: function middleware() {
         var self = this;
         each(this.logs, function (log) {
-          console.log("logger");
           self.app.use(morgan("combined", log));
         });
       }
@@ -218,7 +217,7 @@ var Servomatic = (function () {
         var _this = this;
 
         var dirs = this.dirs;
-        console.log("executing in cwd: " + this.cwd + " with dirs " + JSON.stringify(this.dirs));
+        console.log("servomatic serving from: " + this.cwd);
 
         this.app.set("port", this.port);
 
