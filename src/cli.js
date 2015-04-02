@@ -1,4 +1,4 @@
-#!/usr/local/bin/node
+#!/usr/bin/env node
 
 import minimist from 'minimist';
 import Servomatic from './servomatic';

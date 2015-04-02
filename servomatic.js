@@ -197,7 +197,7 @@ var Servomatic = (function () {
 
     var cwd = process.cwd(),
         defaultDirs = {
-      "static": join(cwd, "dist"),
+      "static": join(cwd),
       "public": join(cwd, "public"),
       views: join(cwd, "views"),
       favicon: join(cwd, "favicon.ico"),
