@@ -25,7 +25,7 @@ class Servomatic {
     this.app.set('env', this.env);
     this.dirs = merge(defaultDirs, opts.dirs);
     this.logger = new Logger( this.app );
-    this.port = opts.port || process.env.PORT || 80;
+    this.port = opts.port || process.env.PORT || 1337;
   }
 
   start() {
